@@ -66,7 +66,7 @@ def getMessage():
         data = cv2.imread('static/data/bts.jpg')
         _, data = cv2.imencode('.png', data)
         data = base64.encodebytes(data).decode('utf-8')
-        # decodeImage(r['image'][0], 'origin')
+        decodeImage(r['image'][0], 'origin')
         decodeImage(data, 'origin')
 
         # load origin image and make mask image
