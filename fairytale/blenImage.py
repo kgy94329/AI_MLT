@@ -10,15 +10,10 @@ from utils import compute_gt_gradient, make_canvas_mask, numpy2tensor, laplacian
                   MeanShift, Vgg16, gram_matrix
 from timeit import default_timer as timer
 from datetime import timedelta
-import argparse
 import os
 import gc
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--source_file', type=str, default='data/0g_source.png', help='path to the source image')
-parser.add_argument('--mask_file', type=str, default='data/0g_mask.png', help='path to the mask image')
-parser.add_argument('--target_file', type=str, default='data/3_target.png', help='path to the target image')
 ss=300
 ts=512
 x_start=400
@@ -42,13 +37,6 @@ def get_input_optimizer(first_pass_img):
 ########### First Pass ###########x
 ###################################
 def first_step(source_file, mask_file, target_file):
-    # # Hyperparameter Inputs
-    # gpu_id = gpu_id
-    # num_steps = num_steps
-    # ss = ss; # source image size
-    # ts = ts # target image size
-    # x_start = x; 
-    # y_start = y # blending location
 
     # Default weights for loss functions in the first pass
     grad_weight = 1e4; style_weight = 1e4; content_weight = 1; tv_weight = 1e-6
@@ -96,19 +84,6 @@ def first_step(source_file, mask_file, target_file):
             grad_loss /= len(pred_gradient)
             grad_loss *= grad_weight
             
-            # Compute Style Loss
-            # target_features_style = vgg(mean_shift(target_img))
-            # target_gram_style = [gram_matrix(y) for y in target_features_style]
-            #
-            # blend_features_style = vgg(mean_shift(input_img))
-            # blend_gram_style = [gram_matrix(y) for y in blend_features_style]
-            #
-            # style_loss = 0
-            # for layer in range(len(blend_gram_style)):
-            #     style_loss += mse(blend_gram_style[layer], target_gram_style[layer])
-            # style_loss /= len(blend_gram_style)
-            # style_loss *= style_weight
-
             
             # Compute Content Loss
             blend_obj = blend_img[:,:,int(x_start-source_img.shape[2]*0.625):int(x_start+source_img.shape[2]*0.625), int(y_start-source_img.shape[3]*0.5):int(y_start+source_img.shape[3]*0.5)]
@@ -126,17 +101,6 @@ def first_step(source_file, mask_file, target_file):
             loss = grad_loss + content_loss + tv_loss
             optimizer.zero_grad()
             loss.backward()
-            
-            # Print Loss
-            # if run[0] % 1 == 0:
-            #     print("run {}:".format(run))
-            #     print('grad : {:4f}, style : {:4f}, content: {:4f}, tv: {:4f}'.format(\
-            #                   grad_loss.item(), \
-            #                   style_loss.item(), \
-            #                   content_loss.item(), \
-            #                   tv_loss.item()
-            #                   ))
-            #     print()
             
             run[0] += 1
             return loss
