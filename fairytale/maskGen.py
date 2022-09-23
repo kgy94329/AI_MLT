@@ -1,9 +1,10 @@
 from rembg import remove
 import numpy as np
 import cv2
+import gc
 
 # input_path = r"C:\Users\HP\Desktop\workspace\Project\FairyTale\Speech2Text2Image\fairytale\testoutput\input\girl-1.jpg"
-mask_output_path = r"C:\Users\HP\Desktop\workspace\Project\FairyTale\Speech2Text2Image\fairytale\static\data\mask_image.png"
+mask_output_path = r"static\data\mask_image.png"
 
 
 def bg_remove(data):
@@ -17,6 +18,7 @@ def create_mask(data):
     mask = output[:, :, -1]
     mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2RGBA)
     cv2.imwrite(mask_output_path, mask)
+    gc.collect()
     print('complete')
 
 # example

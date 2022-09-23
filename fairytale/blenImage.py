@@ -12,6 +12,7 @@ from timeit import default_timer as timer
 from datetime import timedelta
 import argparse
 import os
+import gc
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
 parser = argparse.ArgumentParser()
@@ -23,7 +24,7 @@ ts=512
 x_start=400
 y_start=235
 gpu_id=0
-num_steps=800
+num_steps=500
 
 # Define Loss Functions
 mse = torch.nn.MSELoss()
@@ -175,7 +176,7 @@ def second_step(target_file, name):
 
     print('Optimizing...')
     run = [0]
-    while run[0] <= 100:
+    while run[0] <= 30:
         
         def closure():
             # Compute Loss Loss    
@@ -223,3 +224,4 @@ def blendImage(source_file, mask_file, target_file):
     second_step(target_file, name)
     end2 = timer()
     print(timedelta(seconds=end2-start2), timedelta(seconds=end2-start))
+    gc.collect()
