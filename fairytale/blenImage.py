@@ -19,7 +19,7 @@ ts=512
 x_start=400
 y_start=235
 gpu_id=0
-num_steps=500
+num_steps=800
 
 # Define Loss Functions
 mse = torch.nn.MSELoss()
@@ -179,13 +179,21 @@ def second_step(target_file, name):
 
 
 def blendImage(source_file, mask_file, target_file):
-    print('Image Blending Start')
-    start = timer()
-    name = first_step(source_file, mask_file, target_file)
-    end = timer()
-    print('First Blending is done', timedelta(seconds=end-start))
-    start2 = timer()
-    second_step(target_file, name)
-    end2 = timer()
-    print(timedelta(seconds=end2-start2), timedelta(seconds=end2-start))
-    gc.collect()
+    try:
+        print('Image Blending Start')
+        start = timer()
+        name = first_step(source_file, mask_file, target_file)
+        end = timer()
+        print('First Blending is done', timedelta(seconds=end-start))
+        start2 = timer()
+        second_step(target_file, name)
+        end2 = timer()
+        print(timedelta(seconds=end2-start2), timedelta(seconds=end2-start))
+        gc.collect()
+    except Exception as e:
+        return e
+# source_file = r'C:\Users\HP\Desktop\workspace\Project\FairyTale\AI_MLT\fairytale\static\data\origin2.png'
+# mask_file = r'C:\Users\HP\Desktop\workspace\Project\FairyTale\AI_MLT\fairytale\static\data\mask_image2.png'
+# target_file = r'C:\Users\HP\Desktop\workspace\Project\FairyTale\AI_MLT\fairytale\static\data\back_ground.png'
+
+# blendImage(source_file, mask_file, target_file)

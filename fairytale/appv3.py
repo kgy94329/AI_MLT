@@ -1,7 +1,7 @@
 '''
-file: appv2.py
+file: appv3.py
 author: Guyoung Kwon
-date: 2022.09.19
+date: 2022.09.26
 memo:
     전달받는 데이터: 이미지, 텍스트
     처리 프로세스: 
@@ -26,7 +26,7 @@ app = Flask(__name__)
 app.debug=True
 
 addr_spring = 'http://192.168.0.116:5003' + '/receive/image'
-addr_colab = 'http://ebcb-35-245-160-209.ngrok.io' + '/gettext'
+addr_colab = 'http://0f47-35-223-220-2.ngrok.io' + '/gettext'
 
 def decodeImage(data, name):
     # 이미지를 디코딩하고 저장
@@ -52,8 +52,8 @@ def getMask(data):
     cv2.imread('static/data/mask_image.png')
     imageBlend()
 
-@app.route('/getmessage', methods=['POST'])
-def getMessage():
+@app.route('/gettext', methods=['POST'])
+def getText():
     if request.method == 'POST':
         # For json communicatoin
         if request.is_json:
@@ -62,26 +62,38 @@ def getMessage():
         # send text data to colab flask
         sendMessage(r['text'], 'text', addr_colab)
 
-        # decode image data and make mask image
-        data = cv2.imread('static/data/poop.jpg')
-        data = cv2.resize(data, (512, 512))
-        _, data = cv2.imencode('.png', data)
-        data = base64.encodebytes(data).decode('utf-8')
-        # decodeImage(r['image'][0], 'origin')
-        decodeImage(data, 'origin')
-
-        # load origin image and make mask image
-        img = cv2.imread('static/data/origin.png')
-        getMask(img)
-    
     response = {"msg":'Successfully received data'}
     
     # encode response
     response = jsonpickle.encode(response)
     return Response(response=response, status = 200, mimetype='application/json')
 
+@app.route('/getimage', methods=['POST'])
+def getImage():
+    if request.method == 'POST':
+        # For json communicatoin
+        if request.is_json:
+            r = request.get_json()
 
+        decodeImage(r['image'][0], 'origin')
+        # decode image data and make mask image
+        data = cv2.imread('static/data/iu_test.jpg')
+        _, data = cv2.imencode('.png', data)
+        data = base64.encodebytes(data).decode('utf-8')
+        # decodeImage(data, 'origin')
 
+        
+        
+        # load origin image and make mask image
+        # img = cv2.imread('static/data/origin.png')
+        # getMask(img)
+
+        response = {"image":data}
+    
+    # encode response
+    response = jsonpickle.encode(response)
+    return Response(response=response, status = 200, mimetype='application/json')
+        
 def sendMessage(data, type, addr):
     # prepare headers for http request
     content_type = 'application/json'
@@ -105,6 +117,7 @@ def sendMessage(data, type, addr):
         response = requests.post(addr, data=data, headers=headers)
         # decode image
         decodeImage(response.text, 'back_ground')
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port = 5001)

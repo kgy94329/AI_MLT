@@ -13,14 +13,16 @@ def bg_remove(data):
     return output
 
 def create_mask(data):
-    print('start generate mask')
-    output = bg_remove(data)
-    mask = output[:, :, -1]
-    mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2RGBA)
-    cv2.imwrite(mask_output_path, mask)
-    gc.collect()
-    print('complete')
-
+    try:
+        print('start generate mask')
+        output = bg_remove(data)
+        mask = output[:, :, -1]
+        mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2RGBA)
+        cv2.imwrite(mask_output_path, mask)
+        gc.collect()
+        print('complete')
+    except Exception as e:
+        return e
 # example
 # write => 저장할 것인지 안할 것인지
 
