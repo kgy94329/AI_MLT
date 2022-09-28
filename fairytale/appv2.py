@@ -26,7 +26,7 @@ app = Flask(__name__)
 app.debug=True
 
 addr_spring = 'http://192.168.0.116:5003' + '/receive/image'
-addr_colab = 'http://ebcb-35-245-160-209.ngrok.io' + '/gettext'
+addr_colab = 'http://422d-35-198-247-133.ngrok.io' + '/gettext'
 
 def decodeImage(data, name):
     # 이미지를 디코딩하고 저장
@@ -60,10 +60,10 @@ def getMessage():
             r = request.get_json()
 
         # send text data to colab flask
-        sendMessage(r['text'], 'text', addr_colab)
+        # sendMessage(r['text'], 'text', addr_colab)
 
         # decode image data and make mask image
-        data = cv2.imread('static/data/poop.jpg')
+        data = cv2.imread('static/data/IU.jpg')
         data = cv2.resize(data, (512, 512))
         _, data = cv2.imencode('.png', data)
         data = base64.encodebytes(data).decode('utf-8')
